@@ -1,7 +1,10 @@
 import { Module } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { TypeOrmModule } from '@nestjs/typeorm';
+import { Order } from './orders/entities/order.entity';
+import { OrdersModule } from './orders/orders.module';
+import { PaymentsModule } from './payments/payments.module';
 
 @Module({
   imports: [
@@ -12,9 +15,11 @@ import { TypeOrmModule } from '@nestjs/typeorm';
       username: 'root',
       password: 'secret123',
       database: 'nestjs_development',
-      entities: [],
+      entities: [Order],
       synchronize: true, // TODO: Turn off in production
     }),
+    OrdersModule,
+    PaymentsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
