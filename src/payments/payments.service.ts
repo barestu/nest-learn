@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { MidtransTrxNotification } from 'src/lib/vendors/midtrans.service';
+import { MidtransTrxNotification } from 'src/common/vendors/midtrans.service';
 import { OrdersService } from 'src/orders/orders.service';
 
 @Injectable()

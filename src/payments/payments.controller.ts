@@ -1,7 +1,7 @@
 import { Body, Controller, Post } from '@nestjs/common';
 import { PaymentsService } from './payments.service';
 import { ApiTags } from '@nestjs/swagger';
-import { MidtransTrxNotification } from 'src/lib/vendors/midtrans.service';
+import { MidtransTrxNotification } from 'src/common/vendors/midtrans.service';
 
 @ApiTags('Payments')
 @Controller('payments')
