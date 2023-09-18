@@ -30,7 +30,7 @@ export class AuthService {
       email: user.email,
     });
 
-    return accessToken;
+    return { accessToken };
   }
 
   async register(payload: RegisterDto) {
@@ -43,7 +43,11 @@ export class AuthService {
   }
 
   async me(userId: number) {
-    return this.usersService.findOne(userId);
+    const user = await this.usersService.findOne(userId);
+    if (!user) {
+      throw new UnauthorizedException();
+    }
+    return user;
   }
 
   async logout() {

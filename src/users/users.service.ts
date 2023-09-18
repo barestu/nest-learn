@@ -1,10 +1,6 @@
-import {
-  BadRequestException,
-  Injectable,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { IsNull, Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { User } from './entities/user.entity';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -40,14 +36,15 @@ export class UsersService {
   }
 
   async findOne(id: number) {
-    return this.usersRepository.findOneBy({ id });
+    return this.usersRepository.findOneBy({ id: id || IsNull() });
   }
 
   async validateUser(email: string, password: string) {
-    const user = await this.usersRepository.findOne({
-      where: { email },
-      select: { password: true },
-    });
+    const user = await this.usersRepository
+      .createQueryBuilder()
+      .addSelect('User.password')
+      .where('User.email = :email', { email })
+      .getOne();
 
     if (!user) {
       return null;
@@ -58,6 +55,8 @@ export class UsersService {
     if (!isPasswordMatch) {
       return null;
     }
+
+    delete user.password;
 
     return user;
   }
