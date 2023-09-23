@@ -1,15 +1,16 @@
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { INestApplication, ValidationPipe } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import helmet from 'helmet';
 import { AppModule } from './app.module';
-import { ValidationPipe } from '@nestjs/common';
 
-async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+function setupSwagger(app: INestApplication) {
+  const configService = app.get(ConfigService);
 
   const config = new DocumentBuilder()
-    .setTitle('App Title')
-    .setDescription('App Description Here')
+    .setTitle(configService.get('APP_TITLE'))
+    .setDescription(configService.get('APP_DESCRIPTION'))
     .setVersion('1.0')
     .addBearerAuth()
     .build();
@@ -20,11 +21,22 @@ async function bootstrap() {
       persistAuthorization: true,
     },
   });
+}
+
+async function bootstrap() {
+  const app = await NestFactory.create(AppModule);
+  const configService = app.get(ConfigService);
+
+  const ffApiDocs = configService.get('FEATURE_API_DOCS') === 'true';
 
   app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
   app.use(helmet());
   app.enableCors();
 
-  await app.listen(8080);
+  if (ffApiDocs) {
+    setupSwagger(app);
+  }
+
+  await app.listen(configService.get('APP_PORT'));
 }
 bootstrap();

@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import * as midtransClient from 'midtrans-client';
 
 export interface MidtransCreateTrxDto {
@@ -29,10 +30,14 @@ export interface MidtransTrxNotification {
 
 @Injectable()
 export class MidtransService {
-  private snap = new midtransClient.Snap({
-    isProduction: false,
-    serverKey: 'SB-Mid-server-QvPu7opCO1kDtgYRv4PF73se',
-  });
+  private snap: any;
+
+  constructor(private readonly configService: ConfigService) {
+    this.snap = new midtransClient.Snap({
+      isProduction: false,
+      serverKey: this.configService.get('MIDTRANS_SERVER_KEY'),
+    });
+  }
 
   public async createTransaction(
     params: MidtransCreateTrxDto,
