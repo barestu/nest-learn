@@ -61,14 +61,12 @@ export class UsersService {
     return user;
   }
 
-  async update(id: number, updateUserDto: UpdateUserDto) {
+  async update(id: number, payload: UpdateUserDto) {
     const user = await this.usersRepository.findOneBy({ id });
-
     if (!user) {
       throw new BadRequestException('User not found');
     }
-
-    return this.usersRepository.update(id, updateUserDto);
+    return this.usersRepository.update(id, payload);
   }
 
   async remove(id: number) {
