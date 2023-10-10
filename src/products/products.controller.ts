@@ -12,6 +12,7 @@ import {
   FileTypeValidator,
   Put,
   UseGuards,
+  Query,
 } from '@nestjs/common';
 import { FilesInterceptor } from '@nestjs/platform-express';
 import { ApiBearerAuth, ApiConsumes, ApiTags } from '@nestjs/swagger';
@@ -20,6 +21,7 @@ import { ContentType } from 'src/common/enums/content-type.enum';
 import { ProductsService } from './products.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
+import { FindAllProductDto } from './dto/find-all-product.dto';
 
 @ApiBearerAuth()
 @ApiTags('Products')
@@ -48,8 +50,8 @@ export class ProductsController {
   }
 
   @Get()
-  findAll() {
-    return this.productsService.findAll();
+  findAll(@Query() query: FindAllProductDto) {
+    return this.productsService.findAll(query);
   }
 
   @Get(':productId')
