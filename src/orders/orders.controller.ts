@@ -6,6 +6,7 @@ import {
   Param,
   Post,
   Put,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
@@ -13,6 +14,7 @@ import { AuthGuard } from 'src/auth/guards/auth.guard';
 import { OrdersService } from './orders.service';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
+import { FindOrdersQueryDto } from './dto/find-orders-query.dto';
 
 @ApiBearerAuth()
 @ApiTags('Orders')
@@ -27,8 +29,8 @@ export class OrdersController {
   }
 
   @Get()
-  findAll() {
-    return this.ordersService.findAll();
+  findAll(@Query() query: FindOrdersQueryDto) {
+    return this.ordersService.findAll(query);
   }
 
   @Get(':orderId')

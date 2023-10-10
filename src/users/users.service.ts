@@ -5,6 +5,7 @@ import * as bcrypt from 'bcrypt';
 import { User } from './entities/user.entity';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { FindUsersQueryDto } from './dto/find-users-query.dto';
 
 @Injectable()
 export class UsersService {
@@ -31,8 +32,14 @@ export class UsersService {
     return this.usersRepository.save(user);
   }
 
-  findAll() {
-    return this.usersRepository.find();
+  findAll(query: FindUsersQueryDto) {
+    return this.usersRepository.findAndCount({
+      skip: (query.page - 1) * query.limit,
+      take: query.limit,
+      order: {
+        [query.orderBy]: query.order,
+      },
+    });
   }
 
   async findOne(id: number) {

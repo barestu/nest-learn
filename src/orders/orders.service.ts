@@ -5,6 +5,7 @@ import { MidtransService } from 'src/payments/vendors/midtrans.service';
 import { Order } from './entities/order.entity';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
+import { FindOrdersQueryDto } from './dto/find-orders-query.dto';
 
 @Injectable()
 export class OrdersService {
@@ -35,8 +36,14 @@ export class OrdersService {
     }
   }
 
-  async findAll() {
-    return this.ordersRepository.find();
+  async findAll(query: FindOrdersQueryDto) {
+    return this.ordersRepository.findAndCount({
+      skip: (query.page - 1) * query.limit,
+      take: query.limit,
+      order: {
+        [query.orderBy]: query.order,
+      },
+    });
   }
 
   async findById(orderId: number) {

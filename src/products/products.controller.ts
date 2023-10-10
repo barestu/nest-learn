@@ -21,7 +21,7 @@ import { ContentType } from 'src/common/enums/content-type.enum';
 import { ProductsService } from './products.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
-import { FindAllProductDto } from './dto/find-all-product.dto';
+import { FindProductsQueryDto } from './dto/find-products-query.dto';
 
 @ApiBearerAuth()
 @ApiTags('Products')
@@ -50,7 +50,7 @@ export class ProductsController {
   }
 
   @Get()
-  findAll(@Query() query: FindAllProductDto) {
+  findAll(@Query() query: FindProductsQueryDto) {
     return this.productsService.findAll(query);
   }
 

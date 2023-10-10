@@ -5,7 +5,7 @@ import { Product } from './entities/product.entity';
 import { ProductImage } from './entities/product-image.entity';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
-import { FindAllProductDto } from './dto/find-all-product.dto';
+import { FindProductsQueryDto } from './dto/find-products-query.dto';
 
 @Injectable()
 export class ProductsService {
@@ -41,7 +41,7 @@ export class ProductsService {
     return product;
   }
 
-  findAll(query: FindAllProductDto) {
+  findAll(query: FindProductsQueryDto) {
     return this.productsRepository.findAndCount({
       skip: (query.page - 1) * query.limit,
       take: query.limit,
