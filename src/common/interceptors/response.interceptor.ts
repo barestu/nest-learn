@@ -28,14 +28,14 @@ export class ResponseInterceptor<T> implements NestInterceptor<T, Response<T>> {
         if (typeof data[1] == 'number') {
           const query = context.switchToHttp().getRequest().query;
           const meta: PaginationMeta = {
-            page: +query.page,
-            limit: +query.limit,
-            total: data[1],
+            page: query?.page ? +query.page : 1,
+            limit: query?.limit ? +query.limit : 10,
+            total: data[1] ?? 0,
           };
           return {
             success: true,
-            meta,
             data: data[0],
+            meta,
           };
         } else {
           return {
