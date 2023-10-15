@@ -7,11 +7,16 @@ export class CreateProductDto {
   name: string;
 
   @ApiProperty({ required: false, default: 'Lorem ipsum dolor sit amet' })
+  @IsOptional()
   description: string;
 
   @ApiProperty({ default: 5000 })
   @IsNotEmpty()
   price: number;
+
+  @ApiProperty()
+  @IsNotEmpty()
+  categoryId: number;
 
   @ApiProperty({ required: false, type: ['string'], format: 'binary' })
   @IsOptional()

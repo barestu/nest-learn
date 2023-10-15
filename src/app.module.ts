@@ -11,10 +11,12 @@ import { PaymentsModule } from './payments/payments.module';
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 import { ProductsModule } from './products/products.module';
+import { CategoriesModule } from './categories/categories.module';
 import { User } from './users/entities/user.entity';
 import { Order } from './orders/entities/order.entity';
 import { Product } from './products/entities/product.entity';
 import { ProductImage } from './products/entities/product-image.entity';
+import { Category } from './categories/entities/category.entity';
 
 @Module({
   imports: [
@@ -29,7 +31,7 @@ import { ProductImage } from './products/entities/product-image.entity';
         username: configService.get('DB_USERNAME'),
         password: configService.get('DB_PASSWORD'),
         database: configService.get('DB_DATABASE'),
-        entities: [User, Product, ProductImage, Order],
+        entities: [User, Product, ProductImage, Category, Order],
         synchronize: true, // TODO: Turn off in production
         logging: true,
       }),
@@ -39,6 +41,7 @@ import { ProductImage } from './products/entities/product-image.entity';
     OrdersModule,
     PaymentsModule,
     ProductsModule,
+    CategoriesModule,
   ],
   controllers: [AppController],
   providers: [
