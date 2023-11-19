@@ -10,15 +10,15 @@ export class CreateProductDto {
   @IsOptional()
   description: string;
 
-  @ApiProperty({ default: 5000 })
+  @ApiProperty({ type: Number, default: 5000 })
   @IsNotEmpty()
   price: number;
 
-  @ApiProperty()
+  @ApiProperty({ type: Number })
   @IsNotEmpty()
   categoryId: number;
 
-  @ApiProperty({ required: false, type: ['string'], format: 'binary' })
+  @ApiProperty({ required: false, type: [Number] })
   @IsOptional()
-  images: Express.Multer.File[];
+  imageIds?: number[];
 }

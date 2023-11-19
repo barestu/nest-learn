@@ -2,21 +2,29 @@ import { Module } from '@nestjs/common';
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
+
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+
+// Interceptors
 import { ResponseInterceptor } from './common/interceptors/response.interceptor';
 import { ErrorInterceptor } from './common/interceptors/error.interceptor';
+
+// Modules
 import { OrdersModule } from './orders/orders.module';
 import { PaymentsModule } from './payments/payments.module';
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 import { ProductsModule } from './products/products.module';
 import { CategoriesModule } from './categories/categories.module';
+import { MediaModule } from './media/media.module';
+
+// Entities
 import { User } from './users/entities/user.entity';
 import { Order } from './orders/entities/order.entity';
 import { Product } from './products/entities/product.entity';
-import { ProductImage } from './products/entities/product-image.entity';
 import { Category } from './categories/entities/category.entity';
+import { Media } from './media/entities/media.entity';
 
 @Module({
   imports: [
@@ -31,7 +39,7 @@ import { Category } from './categories/entities/category.entity';
         username: configService.get('DB_USERNAME'),
         password: configService.get('DB_PASSWORD'),
         database: configService.get('DB_DATABASE'),
-        entities: [User, Product, ProductImage, Category, Order],
+        entities: [User, Product, Category, Order, Media],
         synchronize: true, // TODO: Turn off in production
         logging: true,
       }),
@@ -42,6 +50,7 @@ import { Category } from './categories/entities/category.entity';
     PaymentsModule,
     ProductsModule,
     CategoriesModule,
+    MediaModule,
   ],
   controllers: [AppController],
   providers: [

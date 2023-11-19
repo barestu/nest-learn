@@ -24,7 +24,7 @@ export class FindAllDto {
     description: 'Sort ordering: asc, desc',
   })
   @IsOptional()
-  order?: string = 'asc';
+  order?: 'ASC' | 'DESC' = 'ASC';
 
   @ApiProperty({
     required: false,

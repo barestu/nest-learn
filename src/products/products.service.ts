@@ -1,19 +1,20 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { IsNull, Repository } from 'typeorm';
+
 import { Product } from './entities/product.entity';
-import { ProductImage } from './entities/product-image.entity';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { FindProductsQueryDto } from './dto/find-products-query.dto';
+import { MediaService } from 'src/media/media.service';
+import { Media } from 'src/media/entities/media.entity';
 
 @Injectable()
 export class ProductsService {
   constructor(
     @InjectRepository(Product)
     private readonly productsRepository: Repository<Product>,
-    @InjectRepository(ProductImage)
-    private readonly productImagesRepository: Repository<ProductImage>,
+    private readonly mediaService: MediaService,
   ) {}
 
   async create(payload: CreateProductDto) {
@@ -22,43 +23,45 @@ export class ProductsService {
     product.description = payload.description;
     product.price = payload.price;
     await this.productsRepository.save(product);
-
-    if (payload.images?.length) {
+    if (payload.imageIds) {
       await Promise.all(
-        payload.images.map((image) => {
-          const productImage = new ProductImage();
-          productImage.filename = image.filename;
-          productImage.originalname = image.originalname;
-          productImage.mimetype = image.mimetype;
-          productImage.size = image.size;
-          productImage.url = image.path;
-          productImage.product = product;
-          return this.productImagesRepository.save(productImage);
-        }),
+        payload.imageIds.map((imageId) =>
+          this.mediaService.update(imageId, {
+            entityId: product.id,
+            entityName: 'product',
+          }),
+        ),
       );
     }
-
     return product;
   }
 
   findAll(query: FindProductsQueryDto) {
-    return this.productsRepository.findAndCount({
-      skip: (query.page - 1) * query.limit,
-      take: query.limit,
-      order: {
-        [query.orderBy]: query.order,
-      },
-      relations: {
-        images: true,
-      },
-    });
+    return this.productsRepository
+      .createQueryBuilder('product')
+      .leftJoinAndMapMany(
+        'product.images',
+        Media,
+        'media',
+        "media.entityId = product.id AND media.entityName = 'product'",
+      )
+      .skip((query.page - 1) * query.limit)
+      .take(query.limit)
+      .orderBy(`product.${query.orderBy}`, query.order)
+      .getManyAndCount();
   }
 
   findOne(id: number) {
-    return this.productsRepository.findOne({
-      where: { id: id || IsNull() },
-      relations: { images: true },
-    });
+    return this.productsRepository
+      .createQueryBuilder('product')
+      .where('product.id = :id', { id })
+      .leftJoinAndMapMany(
+        'product.images',
+        Media,
+        'media',
+        "media.entityId = product.id AND media.entityName = 'product'",
+      )
+      .getOneOrFail();
   }
 
   async update(id: number, payload: UpdateProductDto) {

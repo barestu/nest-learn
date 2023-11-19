@@ -48,9 +48,9 @@ export class UsersService {
 
   async validateUser(email: string, password: string) {
     const user = await this.usersRepository
-      .createQueryBuilder()
-      .addSelect('User.password')
-      .where('User.email = :email', { email })
+      .createQueryBuilder('user')
+      .addSelect('user.password')
+      .where('user.email = :email', { email })
       .getOne();
 
     if (!user) {

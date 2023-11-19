@@ -7,8 +7,8 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { ProductImage } from './product-image.entity';
 import { Category } from 'src/categories/entities/category.entity';
+import { Media } from 'src/media/entities/media.entity';
 
 @Entity()
 export class Product {
@@ -30,10 +30,8 @@ export class Product {
   @ManyToOne(() => Category, (category) => category.products)
   category: Category;
 
-  @OneToMany(() => ProductImage, (productImage) => productImage.product, {
-    onDelete: 'CASCADE',
-  })
-  images: ProductImage[];
+  @OneToMany(() => Media, (media) => media.entityId)
+  images: Media[];
 
   @CreateDateColumn()
   createdAt: Date;

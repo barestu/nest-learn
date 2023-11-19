@@ -29,6 +29,7 @@ async function bootstrap() {
 
   const ffApiDocs = configService.get('FEATURE_API_DOCS') === 'true';
 
+  app.setGlobalPrefix('api');
   app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
   app.use(helmet());
   app.enableCors();
