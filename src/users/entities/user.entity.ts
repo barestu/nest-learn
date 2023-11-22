@@ -17,6 +17,9 @@ export class User {
   @Column({ select: false })
   password: string;
 
+  @Column({ nullable: true, select: false })
+  resetPasswordToken: string;
+
   @Column({ default: false })
   isActive: boolean;
 

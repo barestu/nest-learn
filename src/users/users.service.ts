@@ -1,7 +1,9 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { JwtService } from '@nestjs/jwt';
 import { IsNull, Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
+
 import { User } from './entities/user.entity';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -12,6 +14,7 @@ export class UsersService {
   constructor(
     @InjectRepository(User)
     private readonly usersRepository: Repository<User>,
+    private readonly jwtService: JwtService,
   ) {}
 
   async hashPassword(password: string) {
@@ -46,6 +49,10 @@ export class UsersService {
     return this.usersRepository.findOneBy({ id: id || IsNull() });
   }
 
+  async findOneByEmail(email: string) {
+    return this.usersRepository.findOneBy({ email });
+  }
+
   async validateUser(email: string, password: string) {
     const user = await this.usersRepository
       .createQueryBuilder('user')
@@ -66,6 +73,20 @@ export class UsersService {
     delete user.password;
 
     return user;
+  }
+
+  async createResetPasswordToken(email: string) {
+    const user = await this.findOneByEmail(email);
+    if (!user) {
+      throw new BadRequestException('User not found');
+    }
+    const resetToken = await this.jwtService.signAsync(
+      { email },
+      { expiresIn: '1d', secret: 'eqwopiqweoip' },
+    );
+    user.resetPasswordToken = resetToken;
+    await this.usersRepository.save(user);
+    return resetToken;
   }
 
   async update(id: number, payload: UpdateUserDto) {

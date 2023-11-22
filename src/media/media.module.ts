@@ -19,7 +19,7 @@ import { getFileExtension } from 'src/common/utils/file';
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => ({
         storage: multer.diskStorage({
-          destination: configService.get('MULTER_DEST'),
+          destination: configService.get('UPLOAD_DIR'),
           filename(_, file, cb) {
             const fileExtension = getFileExtension(file.originalname);
             const newFilename = `${uuidv4()}.${fileExtension}`;

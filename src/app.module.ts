@@ -18,6 +18,7 @@ import { UsersModule } from './users/users.module';
 import { ProductsModule } from './products/products.module';
 import { CategoriesModule } from './categories/categories.module';
 import { MediaModule } from './media/media.module';
+import { SharedModule } from './shared/shared.module';
 
 // Entities
 import { User } from './users/entities/user.entity';
@@ -51,6 +52,7 @@ import { Media } from './media/entities/media.entity';
     ProductsModule,
     CategoriesModule,
     MediaModule,
+    SharedModule,
   ],
   controllers: [AppController],
   providers: [

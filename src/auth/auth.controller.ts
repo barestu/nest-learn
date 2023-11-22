@@ -5,6 +5,8 @@ import { AuthGuard } from './guards/auth.guard';
 import { CurrentUser } from 'src/common/decorators/current-user.decorator';
 import { LoginDto } from './dto/login.dto';
 import { RegisterDto } from './dto/register.dto';
+import { ForgotPasswordDto } from './dto/forgot-password.dto';
+import { ResetPasswordDto } from './dto/reset-password.dto';
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -20,6 +22,12 @@ export class AuthController {
   register(@Body() payload: RegisterDto) {
     return this.authService.register(payload);
   }
+
+  @Post('forgot-password')
+  forgotPassword(@Body() payload: ForgotPasswordDto) {
+    return this.authService.forgotPassword(payload);
+  }
+
 
   @ApiBearerAuth()
   @UseGuards(AuthGuard)

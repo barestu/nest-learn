@@ -4,15 +4,21 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { UsersService } from 'src/users/users.service';
+
 import { LoginDto } from './dto/login.dto';
 import { RegisterDto } from './dto/register.dto';
+import { ForgotPasswordDto } from './dto/forgot-password.dto';
+import { UsersService } from 'src/users/users.service';
+import { MailService } from 'src/shared/mail/mail.service';
+import { ViewService } from 'src/shared/view/view.service';
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly usersService: UsersService,
     private readonly jwtService: JwtService,
+    private readonly mailService: MailService,
+    private readonly viewService: ViewService,
   ) {}
 
   async login(payload: LoginDto) {
@@ -54,7 +60,22 @@ export class AuthService {
     return;
   }
 
-  async forgotPassword() {
+  async forgotPassword({ email }: ForgotPasswordDto) {
+    const resetToken = await this.usersService.createResetPasswordToken(email);
+    const resetPasswordUrl = `http://localhost:3000/auth/reset-password?resetToken=${resetToken}`;
+
+    const html = this.viewService.render('./forgot-password', {
+      email,
+      actionUrl: resetPasswordUrl,
+    });
+
+    await this.mailService.sendMail({
+      from: 'noreply@example.com',
+      to: email,
+      subject: 'Forgot Password',
+      html,
+    });
+
     return;
   }
 
