@@ -10,7 +10,9 @@ import { RegisterDto } from './dto/register.dto';
 import { ForgotPasswordDto } from './dto/forgot-password.dto';
 import { UsersService } from 'src/users/users.service';
 import { MailService } from 'src/shared/mail/mail.service';
-import { ViewService } from 'src/shared/view/view.service';
+import { ViewService } from 'src/shared/views/view.service';
+import { ResetPasswordDto } from './dto/reset-password.dto';
+import { ActivateAccountDto } from './dto/activate-account.dto';
 
 @Injectable()
 export class AuthService {
@@ -31,10 +33,10 @@ export class AuthService {
       throw new UnauthorizedException('Wrong email/password');
     }
 
-    const accessToken = await this.jwtService.signAsync({
-      sub: user.id,
-      email: user.email,
-    });
+    const accessToken = await this.usersService.createAccessToken(
+      user.id,
+      user.email,
+    );
 
     return { accessToken };
   }
@@ -45,7 +47,23 @@ export class AuthService {
       throw new BadRequestException();
     }
     delete user.password;
+    const accessToken = await this.usersService.createAccessToken(
+      user.id,
+      user.email,
+    );
+    await this.sendAccountActivationEmail(user.email, accessToken);
     return user;
+  }
+
+  async activateAccount({ token }: ActivateAccountDto) {
+    try {
+      const decoded = await this.jwtService.verifyAsync(token);
+      await this.usersService.update(decoded.id, { isActive: true });
+      await this.sendWelcomeUserEmail(decoded.email);
+      return;
+    } catch (error) {
+      throw new BadRequestException();
+    }
   }
 
   async me(userId: number) {
@@ -60,24 +78,62 @@ export class AuthService {
     return;
   }
 
+  async resetPassword({
+    resetToken,
+    oldPassword,
+    newPassword,
+  }: ResetPasswordDto) {
+    try {
+      const decoded = await this.jwtService.verifyAsync(resetToken);
+      const user = await this.usersService.validateUser(
+        decoded.email,
+        oldPassword,
+      );
+      return this.usersService.update(user.id, { password: newPassword });
+    } catch (error) {
+      throw new BadRequestException();
+    }
+  }
+
+  async sendAccountActivationEmail(email: string, accessToken: string) {
+    const activationUrl = `http://localhost:3000/auth/activate-account?accessToken=${accessToken}`;
+    const html = await this.viewService.render('verify-account', {
+      email,
+      actionUrl: activationUrl,
+    });
+    return this.mailService.sendMail({
+      from: 'noreply@example.com',
+      to: email,
+      subject: 'Verify Your Account',
+      html,
+    });
+  }
+
+  async sendWelcomeUserEmail(email: string) {
+    const html = await this.viewService.render('welcome-user', {
+      email,
+      actionUrl: '',
+    });
+    return this.mailService.sendMail({
+      from: 'noreply@example.com',
+      to: email,
+      subject: 'Congratulation! Your Account is now Active!',
+      html,
+    });
+  }
+
   async sendForgotPasswordEmail({ email }: ForgotPasswordDto) {
     const resetToken = await this.usersService.createResetPasswordToken(email);
     const resetPasswordUrl = `http://localhost:3000/auth/reset-password?resetToken=${resetToken}`;
-
     const html = await this.viewService.render('forgot-password', {
       email,
       actionUrl: resetPasswordUrl,
     });
-
     return this.mailService.sendMail({
       from: 'noreply@example.com',
       to: email,
       subject: 'Forgot Password Notice',
       html,
     });
-  }
-
-  async resetPassword() {
-    return;
   }
 }

@@ -63,16 +63,26 @@ export class UsersService {
     if (!user) {
       return null;
     }
-
     const isPasswordMatch = await this.comparePassword(password, user.password);
-
     if (!isPasswordMatch) {
       return null;
     }
-
     delete user.password;
-
     return user;
+  }
+
+  async createAccessToken(id: number, email: string) {
+    const user = await this.findOneByEmail(email);
+    if (!user) {
+      throw new BadRequestException('User not found');
+    }
+    const accessToken = await this.jwtService.signAsync({
+      sub: id,
+      email,
+    });
+    user.accessToken = accessToken;
+    await this.usersRepository.save(user);
+    return accessToken;
   }
 
   async createResetPasswordToken(email: string) {
