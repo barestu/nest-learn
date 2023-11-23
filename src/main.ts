@@ -5,7 +5,7 @@ import { NestExpressApplication } from '@nestjs/platform-express';
 import { ConfigService } from '@nestjs/config';
 import helmet from 'helmet';
 import * as path from 'path';
-import { AppModule } from './app.module';
+import { AppModule } from './app/app.module';
 
 function setupSwagger(app: INestApplication) {
   const configService = app.get(ConfigService);
