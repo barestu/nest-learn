@@ -1,8 +1,10 @@
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { INestApplication, ValidationPipe } from '@nestjs/common';
+import { NestExpressApplication } from '@nestjs/platform-express';
 import { ConfigService } from '@nestjs/config';
 import helmet from 'helmet';
+import * as path from 'path';
 import { AppModule } from './app.module';
 
 function setupSwagger(app: INestApplication) {
@@ -24,17 +26,18 @@ function setupSwagger(app: INestApplication) {
 }
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create<NestExpressApplication>(AppModule);
   const configService = app.get(ConfigService);
 
-  const ffApiDocs = configService.get('FEATURE_API_DOCS') === 'true';
+  const enableApiDocs = configService.get('FEATURE_API_DOCS') === 'true';
 
-  app.setGlobalPrefix('api');
-  app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
   app.use(helmet());
+  app.useStaticAssets(path.resolve(__dirname, '../../public'));
+  app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
+  app.setGlobalPrefix('api');
   app.enableCors();
 
-  if (ffApiDocs) {
+  if (enableApiDocs) {
     setupSwagger(app);
   }
 

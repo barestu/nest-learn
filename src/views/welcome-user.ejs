@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+  <%- include('./partials/_head', { title: 'Welcome' }) %>
+
+  <body>
+    <span class="preheader"
+      >This is preheader text. Some clients will show this text as a
+      preview.</span
+    >
+    <table
+      role="presentation"
+      border="0"
+      cellpadding="0"
+      cellspacing="0"
+      class="body"
+    >
+      <tr>
+        <td>&nbsp;</td>
+        <td class="container">
+          <div class="content">
+            <!-- START CENTERED WHITE CONTAINER -->
+            <table role="presentation" class="main">
+              <!-- START MAIN CONTENT AREA -->
+              <tr>
+                <td class="wrapper">
+                  <table
+                    role="presentation"
+                    border="0"
+                    cellpadding="0"
+                    cellspacing="0"
+                  >
+                    <tr>
+                      <td>
+                        <p>Hi [User Name]</p>
+                        <p>
+                          Congratulations on successfully activating your
+                          account with [Your Company Name]! We're thrilled to
+                          welcome you to our community.
+                        </p>
+                        <p>
+                          Should you have any questions or need assistance along
+                          the way, our support team is here to help. Feel free
+                          to reach out at [support@email.com].
+                        </p>
+                        <br />
+                        <br />
+                        <p>Thank you,</p>
+                        <p>[Company Name]</p>
+                      </td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
+              <!-- END MAIN CONTENT AREA -->
+            </table>
+            <!-- END CENTERED WHITE CONTAINER -->
+
+            <%- include('./partials/_footer') %>
+          </div>
+        </td>
+        <td>&nbsp;</td>
+      </tr>
+    </table>
+  </body>
+</html>

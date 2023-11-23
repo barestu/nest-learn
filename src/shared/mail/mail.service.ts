@@ -15,11 +15,12 @@ export class MailService {
   }
 
   async sendMail(payload: SendMailDto) {
-    return this.transporter.sendMail({
+    await this.transporter.sendMail({
       from: payload.from,
       to: payload.to,
       subject: payload.subject,
       html: payload.html,
     });
+    return;
   }
 }

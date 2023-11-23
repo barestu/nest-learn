@@ -60,23 +60,21 @@ export class AuthService {
     return;
   }
 
-  async forgotPassword({ email }: ForgotPasswordDto) {
+  async sendForgotPasswordEmail({ email }: ForgotPasswordDto) {
     const resetToken = await this.usersService.createResetPasswordToken(email);
     const resetPasswordUrl = `http://localhost:3000/auth/reset-password?resetToken=${resetToken}`;
 
-    const html = this.viewService.render('./forgot-password', {
+    const html = await this.viewService.render('forgot-password', {
       email,
       actionUrl: resetPasswordUrl,
     });
 
-    await this.mailService.sendMail({
+    return this.mailService.sendMail({
       from: 'noreply@example.com',
       to: email,
-      subject: 'Forgot Password',
+      subject: 'Forgot Password Notice',
       html,
     });
-
-    return;
   }
 
   async resetPassword() {

@@ -25,7 +25,7 @@ export class AuthController {
 
   @Post('forgot-password')
   forgotPassword(@Body() payload: ForgotPasswordDto) {
-    return this.authService.forgotPassword(payload);
+    return this.authService.sendForgotPasswordEmail(payload);
   }
 
 
