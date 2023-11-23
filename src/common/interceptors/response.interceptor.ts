@@ -25,7 +25,7 @@ export class ResponseInterceptor<T> implements NestInterceptor<T, Response<T>> {
   ): Observable<Response<T>> {
     return next.handle().pipe(
       map((data) => {
-        if (typeof data[1] == 'number') {
+        if (typeof data?.[1] == 'number') {
           const query = context.switchToHttp().getRequest().query;
           const meta: PaginationMeta = {
             page: query?.page ? +query.page : 1,
