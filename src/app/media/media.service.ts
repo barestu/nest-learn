@@ -24,7 +24,7 @@ export class MediaService {
       media.originalname = file.originalname;
       media.mimetype = file.mimetype;
       media.size = file.size;
-      media.url = file.path;
+      media.url = file.path.replace('uploads/', '');
       const res = await this.mediaRepository.save(media);
       return res;
     } catch (error) {

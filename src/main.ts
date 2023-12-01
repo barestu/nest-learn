@@ -28,14 +28,16 @@ function setupSwagger(app: INestApplication) {
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
   const configService = app.get(ConfigService);
-
   const enableApiDocs = configService.get('FEATURE_API_DOCS') === 'true';
 
   app.use(helmet());
-  app.useStaticAssets(path.resolve(__dirname, '../../public'));
+  app.enableCors();
+
+  app.useStaticAssets(path.resolve(__dirname, '../public'));
+  app.useStaticAssets(path.resolve(__dirname, '../uploads'));
+
   app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
   app.setGlobalPrefix('api');
-  app.enableCors();
 
   if (enableApiDocs) {
     setupSwagger(app);
