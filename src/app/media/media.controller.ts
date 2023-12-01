@@ -50,6 +50,11 @@ export class MediaController {
     return this.mediaService.upload({ file });
   }
 
+  @Post('cleanup')
+  cleanup() {
+    return this.mediaService.cleanup();
+  }
+
   @Get()
   findAll(@Query() query: FindMediaQueryDto) {
     return this.mediaService.findAll(query);

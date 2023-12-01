@@ -1,6 +1,6 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { IsNull, Repository } from 'typeorm';
 import * as fs from 'fs';
 import * as path from 'path';
 
@@ -28,10 +28,7 @@ export class MediaService {
       const res = await this.mediaRepository.save(media);
       return res;
     } catch (error) {
-      const isExist = fs.existsSync(path.resolve(file.path));
-      if (isExist) {
-        fs.unlinkSync(file.path);
-      }
+      this.removeFromStorage(file.path);
       return Promise.reject(error);
     }
   }
@@ -62,11 +59,31 @@ export class MediaService {
     return this.mediaRepository.update(id, payload);
   }
 
+  removeFromStorage(location: string) {
+    const realLocation = `uploads/${location}`;
+    const isExist = fs.existsSync(path.resolve(realLocation));
+    if (isExist) {
+      fs.unlinkSync(realLocation);
+    }
+  }
+
   async remove(id: number) {
     const media = await this.mediaRepository.findOneBy({ id });
     if (!media) {
       throw new BadRequestException('Product not found');
     }
+    this.removeFromStorage(media.url);
     return this.mediaRepository.remove(media);
+  }
+
+  async cleanup() {
+    const mediaList = await this.mediaRepository.find({
+      where: {
+        entityId: IsNull(),
+        entityName: IsNull(),
+      },
+    });
+    mediaList?.forEach((media) => this.remove(media.id));
+    return;
   }
 }
