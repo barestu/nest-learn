@@ -5,10 +5,16 @@ import { JwtModule } from '@nestjs/jwt';
 import { ProductsService } from './products.service';
 import { ProductsController } from './products.controller';
 import { Product } from './entities/product.entity';
-import { MediaModule } from 'src/app/media/media.module';
+import { CategoriesModule } from '../categories/categories.module';
+import { MediaModule } from '../media/media.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Product]), JwtModule, MediaModule],
+  imports: [
+    TypeOrmModule.forFeature([Product]),
+    JwtModule,
+    CategoriesModule,
+    MediaModule,
+  ],
   controllers: [ProductsController],
   providers: [ProductsService],
 })
