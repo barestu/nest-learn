@@ -4,6 +4,7 @@ import { INestApplication, ValidationPipe } from '@nestjs/common';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { ConfigService } from '@nestjs/config';
 import helmet from 'helmet';
+import * as compression from 'compression';
 import * as path from 'path';
 import { AppModule } from './app/app.module';
 
@@ -31,6 +32,7 @@ async function bootstrap() {
   const enableApiDocs = configService.get('FEATURE_API_DOCS') === 'true';
 
   app.use(helmet());
+  app.use(compression());
   app.enableCors();
 
   app.useStaticAssets(path.resolve(__dirname, '../public'));
