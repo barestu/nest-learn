@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { FirebaseModule } from 'nestjs-firebase';
 
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -19,6 +20,7 @@ import { ProductsModule } from './products/products.module';
 import { CategoriesModule } from './categories/categories.module';
 import { MediaModule } from './media/media.module';
 import { SharedModule } from './shared/shared.module';
+import { NotificationsModule } from './notifications/notifications.module';
 
 // Entities
 import { User } from './users/entities/user.entity';
@@ -30,6 +32,9 @@ import { Media } from './media/entities/media.entity';
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
+    FirebaseModule.forRoot({
+      googleApplicationCredential: 'google-service-account.json',
+    }),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
@@ -53,6 +58,7 @@ import { Media } from './media/entities/media.entity';
     CategoriesModule,
     MediaModule,
     SharedModule,
+    NotificationsModule,
   ],
   controllers: [AppController],
   providers: [
