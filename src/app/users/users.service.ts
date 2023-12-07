@@ -1,28 +1,32 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { JwtService } from '@nestjs/jwt';
-import { IsNull, Repository } from 'typeorm';
+import { FindOneOptions, IsNull, Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 
 import { User } from './entities/user.entity';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { FindUsersQueryDto } from './dto/find-users-query.dto';
+import { RolesService } from '../roles/roles.service';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(User)
     private readonly usersRepository: Repository<User>,
+    private readonly rolesService: RolesService,
     private readonly jwtService: JwtService,
   ) {}
 
+  // TODO: move to bcryptService
   async hashPassword(password: string) {
     const saltOrRounds = await bcrypt.genSalt();
     const result = await bcrypt.hash(password, saltOrRounds);
     return result;
   }
 
+  // TODO: move to bcryptService
   async comparePassword(password: string, hash: string) {
     const isMatch = await bcrypt.compare(password, hash);
     return isMatch;
@@ -32,6 +36,7 @@ export class UsersService {
     const user = new User();
     user.email = payload.email;
     user.password = await this.hashPassword(payload.password);
+    user.role = await this.rolesService.findOneWhere({ name: 'User' });
     return this.usersRepository.save(user);
   }
 
@@ -46,11 +51,16 @@ export class UsersService {
   }
 
   async findOne(id: number) {
-    return this.usersRepository.findOneBy({ id: id || IsNull() });
+    return this.usersRepository.findOne({
+      where: { id: id || IsNull() },
+      relations: {
+        role: true,
+      },
+    });
   }
 
-  async findOneByEmail(email: string) {
-    return this.usersRepository.findOneBy({ email });
+  async findOneWhere(options: FindOneOptions<User>) {
+    return this.usersRepository.findOne(options);
   }
 
   async validateUser(email: string, password: string) {
@@ -71,14 +81,18 @@ export class UsersService {
     return user;
   }
 
-  async createAccessToken(id: number, email: string) {
-    const user = await this.findOneByEmail(email);
+  async createAccessToken(email: string) {
+    const user = await this.usersRepository.findOne({
+      where: { email },
+      relations: { role: true },
+    });
     if (!user) {
       throw new BadRequestException('User not found');
     }
     const accessToken = await this.jwtService.signAsync({
-      sub: id,
-      email,
+      sub: user.id,
+      email: user.email,
+      roleId: user.role?.id,
     });
     user.accessToken = accessToken;
     await this.usersRepository.save(user);
@@ -86,7 +100,7 @@ export class UsersService {
   }
 
   async createResetPasswordToken(email: string) {
-    const user = await this.findOneByEmail(email);
+    const user = await this.findOneWhere({ where: { email } });
     if (!user) {
       throw new BadRequestException('User not found');
     }

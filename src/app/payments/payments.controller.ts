@@ -1,9 +1,12 @@
-import { Body, Controller, Post } from '@nestjs/common';
-import { PaymentsService } from './payments.service';
+import { Body, Controller, Post, UseGuards } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
-import { MidtransTrxNotification } from 'src/app/payments/vendors/midtrans.service';
+import { AuthGuard } from '../auth/guards/auth.guard';
+import { AclGuard } from '../roles/guards/acl.guard';
+import { PaymentsService } from './payments.service';
+import { MidtransTrxNotification } from './vendors/midtrans.service';
 
 @ApiTags('Payments')
+@UseGuards(AuthGuard, AclGuard)
 @Controller('payments')
 export class PaymentsController {
   constructor(private readonly paymentsService: PaymentsService) {}

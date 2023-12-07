@@ -21,6 +21,7 @@ import { CategoriesModule } from './categories/categories.module';
 import { MediaModule } from './media/media.module';
 import { SharedModule } from './shared/shared.module';
 import { NotificationsModule } from './notifications/notifications.module';
+import { RolesModule } from './roles/roles.module';
 
 // Entities
 import { User } from './users/entities/user.entity';
@@ -28,6 +29,7 @@ import { Order } from './orders/entities/order.entity';
 import { Product } from './products/entities/product.entity';
 import { Category } from './categories/entities/category.entity';
 import { Media } from './media/entities/media.entity';
+import { Role } from './roles/entities/role.entity';
 
 @Module({
   imports: [
@@ -45,9 +47,9 @@ import { Media } from './media/entities/media.entity';
         username: configService.get('DB_USERNAME'),
         password: configService.get('DB_PASSWORD'),
         database: configService.get('DB_DATABASE'),
-        entities: [User, Product, Category, Order, Media],
+        entities: [User, Product, Category, Order, Media, Role],
         synchronize: true, // TODO: Turn off in production
-        logging: true,
+        // logging: true,
       }),
     }),
     AuthModule,
@@ -59,6 +61,7 @@ import { Media } from './media/entities/media.entity';
     MediaModule,
     SharedModule,
     NotificationsModule,
+    RolesModule,
   ],
   controllers: [AppController],
   providers: [

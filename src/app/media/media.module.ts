@@ -6,6 +6,7 @@ import { JwtModule } from '@nestjs/jwt';
 import * as multer from 'multer';
 import { v4 as uuidv4 } from 'uuid';
 
+import { RolesModule } from '../roles/roles.module';
 import { MediaService } from './media.service';
 import { MediaController } from './media.controller';
 import { Media } from './entities/media.entity';
@@ -29,6 +30,7 @@ import { getFileExtension } from 'src/core/utils/file';
       }),
     }),
     JwtModule,
+    RolesModule,
   ],
   controllers: [MediaController],
   providers: [MediaService],

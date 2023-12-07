@@ -28,29 +28,26 @@ export class AuthService {
       payload.email,
       payload.password,
     );
-
     if (!user) {
       throw new UnauthorizedException('Wrong email/password');
     }
-
-    const accessToken = await this.usersService.createAccessToken(
-      user.id,
-      user.email,
-    );
-
+    const accessToken = await this.usersService.createAccessToken(user.email);
     return { accessToken };
   }
 
   async register(payload: RegisterDto) {
+    const userExist = await this.usersService.findOneWhere({
+      where: { email: payload.email },
+    });
+    if (userExist) {
+      throw new BadRequestException('User with this email already exists');
+    }
     const user = await this.usersService.create(payload);
     if (!user) {
       throw new BadRequestException();
     }
     delete user.password;
-    const accessToken = await this.usersService.createAccessToken(
-      user.id,
-      user.email,
-    );
+    const accessToken = await this.usersService.createAccessToken(user.email);
     await this.sendAccountActivationEmail(user.email, accessToken);
     return user;
   }

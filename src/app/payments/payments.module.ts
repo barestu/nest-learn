@@ -1,11 +1,13 @@
 import { Module } from '@nestjs/common';
-import { OrdersModule } from 'src/app/orders/orders.module';
+import { JwtModule } from '@nestjs/jwt';
+import { RolesModule } from '../roles/roles.module';
+import { OrdersModule } from '../orders/orders.module';
 import { PaymentsService } from './payments.service';
 import { PaymentsController } from './payments.controller';
 import { MidtransService } from './vendors/midtrans.service';
 
 @Module({
-  imports: [OrdersModule],
+  imports: [JwtModule, OrdersModule, RolesModule],
   controllers: [PaymentsController],
   providers: [PaymentsService, MidtransService],
   exports: [MidtransService],

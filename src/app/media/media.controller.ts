@@ -16,17 +16,18 @@ import {
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiBody, ApiConsumes, ApiTags } from '@nestjs/swagger';
 import { FileInterceptor } from '@nestjs/platform-express';
-
-import { MediaService } from './media.service';
-import { AuthGuard } from 'src/app/auth/guards/auth.guard';
 import { ContentType } from 'src/core/enums/content-type.enum';
+import { AuthGuard } from '../auth/guards/auth.guard';
+import { AclGuard } from '../roles/guards/acl.guard';
+import { CheckPolicies } from '../roles/decorators/check-policies.decorator';
+import { MediaService } from './media.service';
 import { FindMediaQueryDto } from './dto/find-media-query.dto';
 import { UpdateMediaDto } from './dto/update-media.dto';
 import { UploadMediaDto } from './dto/upload-media.dto';
 
 @ApiBearerAuth()
 @ApiTags('Media')
-@UseGuards(AuthGuard)
+@UseGuards(AuthGuard, AclGuard)
 @Controller('media')
 export class MediaController {
   constructor(private readonly mediaService: MediaService) {}
@@ -50,6 +51,7 @@ export class MediaController {
     return this.mediaService.upload({ file });
   }
 
+  @CheckPolicies('media.delete')
   @Post('cleanup')
   cleanup() {
     return this.mediaService.cleanup();
@@ -70,6 +72,7 @@ export class MediaController {
     return this.mediaService.update(mediaId, payload);
   }
 
+  @CheckPolicies('media.delete')
   @Delete(':mediaId')
   remove(@Param('mediaId') mediaId: number) {
     return this.mediaService.remove(mediaId);

@@ -7,6 +7,7 @@ import { ProductsController } from './products.controller';
 import { Product } from './entities/product.entity';
 import { CategoriesModule } from '../categories/categories.module';
 import { MediaModule } from '../media/media.module';
+import { RolesModule } from '../roles/roles.module';
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { MediaModule } from '../media/media.module';
     JwtModule,
     CategoriesModule,
     MediaModule,
+    RolesModule,
   ],
   controllers: [ProductsController],
   providers: [ProductsService],

@@ -28,7 +28,7 @@ export class AuthGuard implements CanActivate {
     ]);
 
     if (!token && !isPublic) {
-      throw new UnauthorizedException();
+      throw new UnauthorizedException('Invalid token');
     }
 
     try {
@@ -37,7 +37,11 @@ export class AuthGuard implements CanActivate {
         const payload = await this.jwtService.verifyAsync(token, {
           secret: this.configService.get('JWT_SECRET'),
         });
-        request['user'] = { id: payload.sub, email: payload.email };
+        request['user'] = {
+          id: payload.sub,
+          email: payload.email,
+          roleId: payload.roleId,
+        };
       }
 
       return true;
