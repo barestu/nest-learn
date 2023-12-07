@@ -9,11 +9,6 @@ export class CreateRoleDto {
   name: string;
 
   @ApiProperty({ required: false })
-  @IsString()
-  @IsOptional()
-  description?: string;
-
-  @ApiProperty({ required: false })
   @Type(() => AclDto)
   @ValidateNested()
   @IsOptional()

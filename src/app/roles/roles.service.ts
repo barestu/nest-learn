@@ -15,7 +15,6 @@ export class RolesService {
   create(payload: CreateRoleDto) {
     const role = new Role();
     role.name = payload.name;
-    role.description = payload.description;
     role.acl = payload.acl;
     return this.rolesRepository.save(role);
   }

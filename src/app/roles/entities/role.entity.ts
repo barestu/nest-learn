@@ -10,9 +10,6 @@ export class Role {
   @Column()
   name: string;
 
-  @Column({ type: 'text', nullable: true })
-  description: string;
-
   @Column({ type: 'json' })
   acl: AclDto;
 

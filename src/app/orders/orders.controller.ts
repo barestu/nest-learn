@@ -31,7 +31,6 @@ export class OrdersController {
     return this.ordersService.create(payload);
   }
 
-  @CheckPolicies('orders.read')
   @Get()
   findAll(@Query() query: FindOrdersQueryDto) {
     return this.ordersService.findAll(query);

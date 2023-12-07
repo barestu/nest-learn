@@ -35,13 +35,11 @@ export class ProductsController {
     return this.productsService.create({ ...payload });
   }
 
-  @CheckPolicies('products.read')
   @Get()
   findAll(@Query() query: FindProductsQueryDto) {
     return this.productsService.findAll(query);
   }
 
-  @CheckPolicies('products.read')
   @Get(':productId')
   findOne(@Param('productId') productId: number) {
     return this.productsService.findOne(productId);

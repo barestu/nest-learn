@@ -6,30 +6,35 @@ export class AclDto {
   @ApiProperty({ default: [] })
   @IsEnum(Acl, { each: true })
   @IsOptional()
-  categories: Acl[];
+  categories?: Acl[];
 
   @ApiProperty({ default: [] })
   @IsEnum(Acl, { each: true })
   @IsOptional()
-  orders: Acl[];
+  orders?: Acl[];
 
   @ApiProperty({ default: [] })
   @IsEnum(Acl, { each: true })
   @IsOptional()
-  payments: Acl[];
+  payments?: Acl[];
 
   @ApiProperty({ default: [] })
   @IsEnum(Acl, { each: true })
   @IsOptional()
-  products: Acl[];
+  products?: Acl[];
 
   @ApiProperty({ default: [] })
   @IsEnum(Acl, { each: true })
   @IsOptional()
-  roles: Acl[];
+  roles?: Acl[];
 
   @ApiProperty({ default: [] })
   @IsEnum(Acl, { each: true })
   @IsOptional()
-  media: Acl[];
+  media?: Acl[];
+
+  @ApiProperty({ default: [] })
+  @IsEnum(Acl, { each: true })
+  @IsOptional()
+  users?: Acl[];
 }
